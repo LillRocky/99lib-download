@@ -4,10 +4,10 @@ import re
 from bs4 import BeautifulSoup
 from db import db_handle
 
-
+# 网站基础前缀
 base_url = 'http://www.99lib.net'
+# 起始页
 page = 1
-# 书目页
 
 # 代理
 proxie = {
@@ -23,13 +23,16 @@ def get_chapter_list(book_link):
     link_list = list(map(lambda x: base_url + x['href'],a_list))
     return link_list
 
+# 获取书籍信息
 def get_book_info(page):
     page = page
     while True:
         url = base_url + '/book/index.php?page=%d' % page
         print('fecth:' + url) 
+        # 发起请求
         res = requests.get(url,proxies=proxie)
         # res = requests.get(url)
+        # 解析获取信息
         html = BeautifulSoup(res.text, 'html.parser')
         page_span = html.select('.total')[0].text
         total_page = int(re.match(r'^(\d+)/(\d+)$', page_span).group(2))
@@ -40,6 +43,7 @@ def get_book_info(page):
             link = name_list[j]['href']
             name = name_list[j].string
             book_id = re.search(r'\d+',link).group()
+            # 查询书籍是否已存在
             tt = db_handle().is_exist(book_id)
             if tt:
                 print('获取<' + name + '>的章节列表中...')

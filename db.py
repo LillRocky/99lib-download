@@ -2,12 +2,14 @@ import pymongo
 import json
 
 class db_handle():
+    # 配置默认数据库信息
     def __init__(self,host='localhost',port=27017):
         client = pymongo.MongoClient(host=host, port=port)
         db = client.table
         self.collection = db.t_name
         # self.t = t
 
+    # 查询结果是否已存在
     def is_exist(self,id):
         result = self.collection.find({'_id': id}).count()
         if result == 0:
@@ -15,9 +17,11 @@ class db_handle():
         else:
             return False
 
+    # 插入书籍信息
     def save(self,i_dic):
         self.collection.insert_one(i_dic)
     
+    # 根据给定关键字进行查询
     def query(self,q_str,name=True,author=True,category=True):
         query_string = {'$or':[]}
         {'$or': [{'name': {'$regex': q_str}},{'author': {'$regex': q_str}},{'category': {'$regex': q_str}}]}

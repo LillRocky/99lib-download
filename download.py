@@ -6,6 +6,7 @@ import time
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 
+# 设置无头浏览器信息
 chrome_options = Options()
 chrome_options.add_argument('--headless')
 chrome_options.add_argument('--disable-gpu')
@@ -18,7 +19,8 @@ class Download():
         result_list = self.get_results()
         check_list = self.check(result_list)
         self.get_content(check_list)
-
+    
+    # 配置脚本命令行参数
     def get_results(self):
         opts, args = getopt.getopt(sys.argv[1:], 'k:nac')
         key = ''
@@ -37,6 +39,8 @@ class Download():
                 category = False
         result_list = db.query(key,name,author,category)
         return result_list
+
+    # 获取想要下载的书籍
     def check(self,result_list):
         if len(result_list) == []:
             print('查询结果为空')
@@ -52,7 +56,7 @@ class Download():
             check_list.append(result_list[i])
         return check_list
 
-    # 获取章节内容
+    # 获取书籍内容内容
     def get_content(self,check_list):
         driver = webdriver.Chrome(executable_path=chrome_position,chrome_options=chrome_options)   
         for check in check_list:
@@ -74,6 +78,8 @@ class Download():
                 print('第' + str(page) + '章下载完毕/共' + str(total) + '章')
             print('书籍下载完成！')
         driver.quit()
+    
+    # 保存为文本文档
     def save_content(self, content, name):
         with open(name + '.txt', 'a', encoding="utf-8") as f:
             f.write(content + '\n')
